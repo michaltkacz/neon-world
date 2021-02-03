@@ -1,19 +1,11 @@
-// import * as THREE from '../node_modules/three/build/three.module.js';
-// import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
-// import { EffectComposer } from '../node_modules/three/examples/jsm/postprocessing/EffectComposer.js';
-// import { RenderPass } from '../node_modules/three/examples/jsm/postprocessing/RenderPass.js';
-// import { UnrealBloomPass } from '../node_modules/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-
 import * as THREE from 'https://threejs.org/build/three.module.js';
 import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'https://threejs.org/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://threejs.org/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://threejs.org/examples/jsm/postprocessing/UnrealBloomPass.js';
 
+import { AmbientLight } from './objects/ambientLight.js';
 import { Axes } from './objects/axes.js';
-import { Plane } from './objects/plane.js';
-import { Clock } from './objects/clock/clock.js';
-import { AmbientLight } from './objects/lights/ambientLight.js';
 
 export class SceneManager {
     constructor(canvas) {
@@ -31,7 +23,7 @@ export class SceneManager {
     // --- Pseudo private methods ---
     _buildScene() {
         const scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0x000000, 150, 300);
+        //scene.fog = new THREE.Fog(0x000000, 150, 300);
         return scene;
     }
 
@@ -56,10 +48,8 @@ export class SceneManager {
 
     _buildSceneObjects() {
         const sceneObjects = {
-            //"light": new AmbientLight(this._scene, 0x991f9c),
-            //"axes": new Axes(this._scene),
-            "plane": new Plane(this._scene, 1000, 1000, 0x06001a, -70, 32),
-            "clock": new Clock(this._scene)
+            "light": new AmbientLight(this._scene, 0x991f9c),
+            "axes": new Axes(this._scene),
         };
 
         return sceneObjects;
@@ -100,13 +90,12 @@ export class SceneManager {
     // --- Pseudo public core methods ---
     update() {
         this._cameraControls.update();
-        this._sceneObjects["clock"].update();
         this._renderer.renderLists.dispose();
     }
 
     render() {
-        //this._renderer.render(this._scene, this._camera);
-        this._effectComposer.render();
+        this._renderer.render(this._scene, this._camera);
+        //this._effectComposer.render();
     }
 
     // --- Pseudo public additional methods ---

@@ -4,8 +4,9 @@ import { EffectComposer } from 'https://threejs.org/examples/jsm/postprocessing/
 import { RenderPass } from 'https://threejs.org/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://threejs.org/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-import { AmbientLight } from './objects/ambientLight.js';
+import { MyAmbientLight } from './objects/myAmbientLight.js';
 import { Axes } from './objects/axes.js';
+import { Plane } from './objects/plane.js';
 
 export class SceneManager {
     constructor(canvas) {
@@ -23,7 +24,7 @@ export class SceneManager {
     // --- Pseudo private methods ---
     _buildScene() {
         const scene = new THREE.Scene();
-        //scene.fog = new THREE.Fog(0x000000, 150, 300);
+        //scene.fog = new THREE.Fog(0x4B0082, 128, 512);
         return scene;
     }
 
@@ -31,16 +32,16 @@ export class SceneManager {
         const fov = 75;
         const aspectRatio = width / height;
         const zNear = 1;
-        const zFar = 1000;
+        const zFar = 2048;
         const camera = new THREE.PerspectiveCamera(fov, aspectRatio, zNear, zFar);
-        camera.position.set(0, 0, -50);
+        camera.position.set(-128, 128, -128);
         camera.lookAt(0, 0, 0);
         return camera;
     }
 
     _buildRenderer(width, height) {
         const renderer = new THREE.WebGLRenderer({ canvas: this._canvas, antialias: true });
-        renderer.setClearColor(0x000000);
+        renderer.setClearColor(0x030303);
         renderer.setSize(width, height);
         renderer.toneMapping = THREE.ReinhardToneMapping;
         return renderer;
@@ -48,8 +49,9 @@ export class SceneManager {
 
     _buildSceneObjects() {
         const sceneObjects = {
-            "light": new AmbientLight(this._scene, 0x991f9c),
-            "axes": new Axes(this._scene),
+            "light": new MyAmbientLight(this._scene, 0xe6e6e6),
+            //"axes": new Axes(this._scene, 10),
+            "plane": new Plane(this._scene, 128, 128, 8)
         };
 
         return sceneObjects;
@@ -57,13 +59,17 @@ export class SceneManager {
 
     _buildCameraControls() {
         const cameraControls = new OrbitControls(this._camera, this._renderer.domElement);
-        cameraControls.autoRotate = false;
-        cameraControls.autoRotateSpeed = 5.0;
+        cameraControls.autoRotate = true;
+        cameraControls.autoRotateSpeed = 1.0;
         cameraControls.rotateSpeed = 0.5;
-        cameraControls.enablePan = false;
+        cameraControls.enablePan = true;
         cameraControls.enableDamping = true;
-        cameraControls.maxDistance = 100;
-        cameraControls.minDistance = 10;
+        cameraControls.maxDistance = 1024;
+        cameraControls.minDistance = 16;
+        cameraControls.mouseButtons = {
+            LEFT: THREE.MOUSE.ROTATE,
+            MIDDLE: THREE.MOUSE.PAN
+        }
         return cameraControls;
     }
 
@@ -75,6 +81,7 @@ export class SceneManager {
         const bloomPass = new UnrealBloomPass(new THREE.Vector2(this._canvas.width, this._canvas.height), 0, 0, 0);
         bloomPass.exposure = 0;
         bloomPass.threshold = 0;
+        S
         bloomPass.strength = 0.9;
         bloomPass.radius = 0.2;
         return bloomPass;
@@ -94,8 +101,8 @@ export class SceneManager {
     }
 
     render() {
-        this._renderer.render(this._scene, this._camera);
-        //this._effectComposer.render();
+        //this._renderer.render(this._scene, this._camera);
+        this._effectComposer.render();
     }
 
     // --- Pseudo public additional methods ---
